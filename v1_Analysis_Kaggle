@@ -1,0 +1,139 @@
+# This Python 3 environment comes with many helpful analytics libraries installed
+# It is defined by the kaggle/python Docker image: https://github.com/kaggle/docker-python
+# For example, here's several helpful packages to load
+
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+
+# Input data files are available in the read-only "../input/" directory
+# For example, running this (by clicking run or pressing Shift+Enter) will list all files under the input directory
+
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+# You can write up to 20GB to the current directory (/kaggle/working/) that gets preserved as output when you create a version using "Save & Run All" 
+# You can also write temporary files to /kaggle/temp/, but they won't be saved outside of the current session
+
+import matplotlib.pyplot as plt
+%matplotlib inline
+import csv
+
+##import data named students, dataframe
+students = pd.read_csv("/kaggle/input/student-performance-data-set/student-por.csv")
+
+##print dataframe with headers
+students.head()
+
+##Data exploration look to see if there are null values in any columns
+##G1, G2, G3 ar the grading periods so we need values there and activities is the column
+## that indicates if a student is envolved in extra school activities
+print(students.isnull().sum())
+
+##Data exploration count of activities, returned 315 are in activities and 334 are not
+students['activities'].value_counts()
+
+##Data exploration average of performance in G1, G2 and G3
+
+##Data exploration average for students performance with Y activities vs. N activties
+
+##counts of frequency of scores for G3
+students['G3'].value_counts(ascending=False)
+
+data_counts = {'0':15,'1':1, '2':0, '3':0, '4':0, '5':1, '6':3, '7':10,'8': 35, '9':35, '10':97, 
+               '11':104, '12':72, '13':82, '14':63, '15':49, '16':36, '17':29, '18':15, '19':2, '20':0
+            }
+counts = list(data_counts.keys())
+c_values = list(data_counts.values())
+  
+fig = plt.figure(figsize = (6.5, 4.5))
+ 
+# creating the bar plot
+plt.bar(counts, c_values, color ='deepskyblue',
+        width = 0.2)
+ 
+plt.xlabel("scores")
+plt.ylabel("counts")
+plt.title("Counts of Scores for all Students")
+plt.show()
+
+G1_mean = students['G1'].mean()
+print("G1 Mean = ",G1_mean)
+G2_mean = students['G2'].mean()
+print("G2 Mean = ",G2_mean)
+G3_mean = students['G3'].mean()
+print("G3 Mean = ",G3_mean)
+
+active_yes = students['activities'] == 'yes'
+mean_active_yes = students.loc[active_yes, 'G3'].mean()
+print("Mean of Students with Active YES = ", mean_active_yes)
+
+active_no = students['activities'] == 'no'
+mean_active_no = students.loc[active_no, 'G3'].mean()
+print("Mean of Students with Active NO = ", mean_active_no)
+
+data = {'G3 Mean':11.9, 'G3 Mean Activities Yes':12.1, 'G3 Mean Activities No':11.7}
+means = list(data.keys())
+values = list(data.values())
+  
+fig = plt.figure(figsize = (6.5, 4.5))
+ 
+# creating the bar plot
+plt.bar(means, values, color ='deepskyblue',
+        width = 0.2)
+ 
+plt.xlabel("G3")
+plt.ylabel("Mean")
+plt.title("G3 Means")
+plt.show()
+
+G3s = ["All Students - G3","Yes - G3","No - G3"]
+Mean_rate = [11.9,12.1,11.7]
+  
+plt.plot(G3s, Mean_rate, color = 'deepskyblue', marker='o')
+plt.title('G3 Means')
+plt.xlabel('G3 Means with Activity Responses')
+plt.ylabel('G3 Means')
+plt.show()
+
+##no = 334 and yes = 315
+yes_no_active = {'Yes': 315, 'No': 334}
+activity_reply = list(yes_no_active.keys())
+active_count = list(yes_no_active.values())
+  
+fig = plt.figure(figsize = (4.5, 6.5))
+ 
+# creating the bar plot
+plt.bar(activity_reply, active_count, color ='deepskyblue',
+        width = 0.2)
+ 
+plt.xlabel("Activities Replies")
+plt.ylabel("Count")
+plt.title("Activities Replies Yes vs. No")
+plt.show()
+
+students['sex'].value_counts()
+
+students.describe()
+
+columns_to_show = ["G3", "absences","studytime"]
+students.groupby(["sex"])[columns_to_show].describe(percentiles=[])
+
+#create scatterplot of hours vs. score
+plt.scatter(students.absences, students.G3)
+plt.title('Absences vs. G3 Score')
+plt.xlabel('Absences')
+plt.ylabel('G3 Score')
+
+absences_c = students["absences"]
+G3_c = students["G3"]
+correlation = G3_c.corr(absences_c)
+
+print(correlation)
+
+correlation_students = students.corr()
+##calculate all correlations in df
+
+print(correlation_students)
+              
